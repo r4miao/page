@@ -17,7 +17,7 @@ website:
       - icon: github
         href: https://github.com/r4miao/MIDFIELD
   page-footer:
-    right: "Built with [Quarto](https://quarto.org/)"
+    right: "Built with [Quarto](https://quarto.org/) in Rstudio"
     left: "&copy; Copyright 2024, Miao Li"
 
 format:

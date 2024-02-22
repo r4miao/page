@@ -3,16 +3,16 @@ title: "About Me"
 about:
   id: me
   template: broadside
-  image: img/profile.png
+  image: docs/img/ML_forpinting.png
 ---
 
 :::{#me}
 
-## Goals
+### Goals
 
-## Education
+### Education
 
-## Experience
+### Experience
 
 :::
 
