@@ -1,5 +1,19 @@
 [
   {
+    "objectID": "teaching.html#course-1-1",
+    "href": "teaching.html#course-1-1",
+    "title": "Teaching",
+    "section": "Course 1",
+    "text": "Course 1"
+  },
+  {
+    "objectID": "teaching.html#course-1-2",
+    "href": "teaching.html#course-1-2",
+    "title": "Teaching",
+    "section": "Course 1",
+    "text": "Course 1"
+  },
+  {
     "objectID": "projects.html#project-2",
     "href": "projects.html#project-2",
     "title": "Projects",
@@ -19,5 +33,19 @@
     "title": "About Me",
     "section": "",
     "text": "Thanks for checking out my web site!"
+  },
+  {
+    "objectID": "research.html#research-2",
+    "href": "research.html#research-2",
+    "title": "Research",
+    "section": "Research 2",
+    "text": "Research 2"
+  },
+  {
+    "objectID": "research.html#research-3",
+    "href": "research.html#research-3",
+    "title": "Research",
+    "section": "Research 3",
+    "text": "Research 3"
   }
 ]
