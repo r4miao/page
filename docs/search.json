@@ -1,45 +1,52 @@
 [
   {
-    "objectID": "teaching.html",
-    "href": "teaching.html",
+    "objectID": "W2_data_prep_lab.html",
+    "href": "W2_data_prep_lab.html",
+    "title": "Data Preparation Lab",
+    "section": "",
+    "text": "For an introduction to R packages, see here."
+  },
+  {
+    "objectID": "W2_data_prep_lab.html#load-necessary-packages",
+    "href": "W2_data_prep_lab.html#load-necessary-packages",
+    "title": "Data Preparation Lab",
+    "section": "1. Load necessary packages",
+    "text": "1. Load necessary packages\n\nlibrary(readxl)\nlibrary(tidyverse)\nlibrary(labelled)"
+  },
+  {
+    "objectID": "W2_data_prep_lab.html#read-in-data",
+    "href": "W2_data_prep_lab.html#read-in-data",
+    "title": "Data Preparation Lab",
+    "section": "2. Read in Data",
+    "text": "2. Read in Data\n\nYou need to specify your own directory path.\nThe function read_excel is part of the package readxl, which was loaded into the current working environment in the previous step\nR is capable of reading data from most formats, including data files created in other statistical packages. Whether the data was prepared using Excel (in CSV, XLSX, or TXT format), SAS, Stata, SPSS, or others, R can read and load the data.\n\n\nmysurvey &lt;- read_excel(\"data/Survey_results.xlsx\") \n\ncheck the names of the data columns (i.e., variable names)\n\nnames(mysurvey)\n\n[1] \"Are you a Christian?\"                                                                                 \n[2] \"What is your sex?\"                                                                                    \n[3] \"How old are you? (please put in your actual age)\"                                                     \n[4] \"How often do you go to a church?\"                                                                     \n[5] \"Were you a Christian when you were 12 years old?\"                                                     \n[6] \"What is the maximum number of drinks that you ever had in one occasion in the past 30 daysl?\"         \n[7] \"How much do you agree with the statement? Premarital sex is always wrong.\"                            \n[8] \"How much do you agree with same-sex marriage?\"                                                        \n[9] \"Generally speaking, do you usually think of yourself as a Republican, Democrat, Independent, or what?\""
+  },
+  {
+    "objectID": "W2_data_prep_lab.html#rename-the-variables",
+    "href": "W2_data_prep_lab.html#rename-the-variables",
+    "title": "Data Preparation Lab",
+    "section": "3. Rename the variables",
+    "text": "3. Rename the variables\n\na). rename the variables with shorter names\nb). create an ID variable\n\n\nnames(mysurvey) &lt;- c(\"belief\", \"gender\", \"age\", \"reliattend\", \"belief12\",\"alcohol\",\"presex\",\"homosex\",\"polaffi\")\nmysurvey &lt;- rowid_to_column(mysurvey, \"ID\")\n\n\nc). check your work\n\n\nnames(mysurvey)\n\n [1] \"ID\"         \"belief\"     \"gender\"     \"age\"        \"reliattend\"\n [6] \"belief12\"   \"alcohol\"    \"presex\"     \"homosex\"    \"polaffi\"   \n\nhead(mysurvey)\n\n# A tibble: 6 × 10\n     ID belief   gender   age reliattend belief12 alcohol presex homosex polaffi\n  &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  \n1     1 No       Male      18 Rarely or… No             1      1       5 Indepe…\n2     2 Yes      Female    19 Less than… Yes            2      3       3 Republ…\n3     3 Yes      Female    19 Monthly b… Yes            1      4       5 Republ…\n4     4 Yes      Male      19 Rarely or… Yes            1      1       5 Republ…\n5     5 Not Sure Male      19 Rarely or… Yes            2      1       5 Other  \n6     6 No       Female    19 Rarely or… No             2      1       5 Democr…"
+  },
+  {
+    "objectID": "W2_data_prep_lab.html#create-labels-for-the-shorter-variable-names",
+    "href": "W2_data_prep_lab.html#create-labels-for-the-shorter-variable-names",
+    "title": "Data Preparation Lab",
+    "section": "4. Create labels for the shorter variable names",
+    "text": "4. Create labels for the shorter variable names\n\nThe new variable names were too short. We need more information. A label for each variable name containing such information will be great!\nThe function var_label is part of the package labelled, which was loaded into the current working environment in the openning step\n\n\nvar_label(mysurvey) &lt;- list(\n  ID         = \"Individual ID\",\n  belief     = \"Are you a Christian?\",\n  gender     = \"What is your sex?\",\n  age        = \"How old are you?\",\n  reliattend = \"How often do you go to a church?\",\n  belief12   = \"Were you a Christian when you were 12 years old?\",\n  alcohol    = \"Largest number of drinks in one occasion in the past 30 days\",\n  presex     = \"How much agree with ‘premarital sex is always wrong'?\",\n  homosex    = \"How much agree with same-sex marriage?\",\n  polaffi    = \"Political affiliation: Rep, Demo, or Ind?\"\n)"
+  },
+  {
+    "objectID": "W2_data_prep_lab.html#convert-all-character-variables-to-factor-variables",
+    "href": "W2_data_prep_lab.html#convert-all-character-variables-to-factor-variables",
+    "title": "Data Preparation Lab",
+    "section": "5. Convert all character variables to factor variables",
+    "text": "5. Convert all character variables to factor variables\n\nBelow I am using the pipe operator from the tidyverse package.\nfactor is a special data type in R. Click the link to see more details.\nfor factors whose values have an inherent order (e.g., reliattend), I re-order them using levels argument\nthe factor variable belief has a category Not Sure, which I recoded into missing values\nI created a numeric version for the factor variable reliattend\n\n\nmysurvey &lt;-  mysurvey %&gt;%\n  mutate_if(is.character, as.factor) %&gt;% \n  mutate(reliattend = factor(reliattend, levels = c(\"Rarely or never\", \"Less than monthly\", \"Monthly but not weekly\", \"Weekly or more\"))) %&gt;% \n  mutate(belief = fct_recode(belief, NULL = \"Not Sure\")) %&gt;% \n  mutate(attend = as.numeric(reliattend))  # construct a numeric version\n\nCheck the levels of the factor variable\n\nlevels(mysurvey$reliattend)\n\n[1] \"Rarely or never\"        \"Less than monthly\"      \"Monthly but not weekly\"\n[4] \"Weekly or more\"        \n\nstr(mysurvey)\n\ntibble [46 × 11] (S3: tbl_df/tbl/data.frame)\n $ ID        : int [1:46] 1 2 3 4 5 6 7 8 9 10 ...\n  ..- attr(*, \"label\")= chr \"Individual ID\"\n $ belief    : Factor w/ 2 levels \"No\",\"Yes\": 1 2 2 2 NA 1 2 2 2 2 ...\n $ gender    : Factor w/ 2 levels \"Female\",\"Male\": 2 1 1 2 2 1 1 1 1 1 ...\n $ age       : num [1:46] 18 19 19 19 19 19 19 19 19 19 ...\n  ..- attr(*, \"label\")= chr \"How old are you?\"\n $ reliattend: Factor w/ 4 levels \"Rarely or never\",..: 1 2 3 1 1 1 4 4 4 4 ...\n $ belief12  : Factor w/ 2 levels \"No\",\"Yes\": 1 2 2 2 2 1 2 2 2 1 ...\n $ alcohol   : num [1:46] 1 2 1 1 2 2 0 2 1 2 ...\n  ..- attr(*, \"label\")= chr \"Largest number of drinks in one occasion in the past 30 days\"\n $ presex    : num [1:46] 1 3 4 1 1 1 4 5 4 5 ...\n  ..- attr(*, \"label\")= chr \"How much agree with ‘premarital sex is always wrong'?\"\n $ homosex   : num [1:46] 5 3 5 5 5 5 2 2 3 1 ...\n  ..- attr(*, \"label\")= chr \"How much agree with same-sex marriage?\"\n $ polaffi   : Factor w/ 4 levels \"Democrat\",\"Independent\",..: 2 4 4 4 3 1 4 3 2 2 ...\n $ attend    : num [1:46] 1 2 3 1 1 1 4 4 4 4 ..."
+  },
+  {
+    "objectID": "projects.html",
+    "href": "projects.html",
     "title": "Miao Li, PhD",
     "section": "",
-    "text": "SOC2010 Introduction to Sociology\n\n\nSOC3020 Research Methods I\n\n\nSOC4800/6800 Medical Sociology\n\n\nSSCI8010 Quantitative Research Methods I"
-  },
-  {
-    "objectID": "research.html",
-    "href": "research.html",
-    "title": "Miao Li, PhD",
-    "section": "",
-    "text": "Li, Miao, Weidong Wang, Bei Liu, and Sarah Mustillo. (2024).”Combined nutrition and psychosocial stimulation intervention for child development in rural China: the role of parental resources” Chinese Sociological Review, 1-28. https://doi.org/10.1080/21620555.2024.2305787\nLi, Miao and Ye Luo. (2023). Physical Disability, Psychological Resilience and COVID-related Changes in Depressive Symptoms among U.S. Older Adults. The Journals of Gerontology: Series B, gbad025. https://doi.org/10.1093/geronb/gbad025\nLi, Miao and Ye Luo. (2023). Race-Ethnicity and Depressive Symptoms Among U.S. Older Adults in the COVID-19 Pandemic: Uncovering the Counterbalancing Mechanisms. Innovation in Aging. https://doi.org/10.1093/geroni/igad003\nWang, Weidong, and Miao Li. (2023). Daily work stress and parent-to-child aggression: moderation of grandparent coresidence. Chinese Sociological Review, 1-20. https://doi.org/10.1080/21620555.2023.2165060 (*Equal contribution)\nLi, Miao and Weidong Wang. (2021). Educational Disparities in COVID-19 Prevention in China: The Role of Contextual Danger, Perceived Risk, and Interventional Context. International journal of environmental research and public health, 18(7), 3383.\nMustillo, Sarah. A., Li, Miao., Morton, Patricia., & Ferraro, Ken. F. (2021). Early Origins of Body Mass in Later Life: Examining Childhood Risks and Adult Pathways. Journal of Health and Social Behavior, 62(2), 152–169\nMustillo, Sarah, Miao Li, and Weidong Wang. (2021). “Parent Work-to-Family Conflict and Child Psychological Well-being: Moderating Role of Grandparent Coresidence”. Journal of Marriage and Family. 83: 27–39\nLi, Miao. (2020). “College Expectation in Adolescence and Nutritional Health in Early Adulthood: The hidden cost of social position.” Social Science & Medicine. 265 (online first): 113482\nLi, Miao, and Sarah Mustillo. (2020). “Linking Maternal and Offspring Depression: A self-worth process explanation”. Journal of Affective Disorders. 273(1): 113-121.\nMustillo, Sarah, Miao Li, and Ken Ferraro. (2019). “Evaluating the Cumulative Impact of Childhood Misfortune: A Structural Equation Modeling Approach.” Sociological Methods & Research. 50(3), 1073–1109.\nLi, Miao, Rong Fu, Hong Xue, and Youfa Wang. (2019). “Maternal Obesity and Children’s Peer Victimization: The Intergenerational Impact of Weight-based Stigma.” Journal of Health and Social Behavior. 60(1): 69-83.\nLi, Miao, Sarah Mustillo, and James Anderson. (2018). “Childhood poverty dynamics and adulthood overweight/obesity: Unpacking the black box of childhood.” Social Science Research. 76: 92-104.\nLi, Miao, Sarah Mustillo, and Weidong Wang. (2018). “Perceived Discrimination, Screen Use, and BMI among Rural-to-Urban Migrant Children in China: Evidence from A Nutrition Transition Context.” Journal of Immigrant and Minority Health.\nLi, Miao, Fenggang Yang, Yun Lu. (2018). “Religious Plausibility of Chinese College Students: State, Science, and Social Network.” Religions. 9(10):309\nLi, Miao, Youfa Wang, Hong Xue, Jungwon Min. (2017). “Increased Obesity Risks for Being an Only Child in China: Findings from a nationally representative study of 19,487 children.” Public Health. 153: 44–51.\nLi, Miao, Hong Xue, Peng Jia, Yaling Zhao, Zhiyong Wang, Fei Xu and Youfa Wang. (2017). “Pocket Money, Eating Behaviors, and Weight Status among Chinese Children: The Childhood Obesity Study in China Mega-cities.” Preventive Medicine. 100: 208-215.\nJia, Peng, Miao Li, Hong Xue, and Youfa Wang. (2017). “School Environment and Policies and Associations With Child Eating Behaviors and Weight Status in Urban China: The Childhood Obesity Study in China Mega-cities”. International Journal of Obesity. 41: 813–819. (*Equal contribution)\nMin, Jungwon, Hong Xue, Vivian Wang, Miao Li, and Youfa Wang. (2017). “Are single children more likely to be overweight or obese than those with siblings? The influence of China’s one-child policy on childhood obesity.” Preventive Medicine. 103: 8-13.\nLi, Miao, Hong Xue, Weidong Wang, and Youfa Wang. (2017). “Parental Expectations and Children’s Screen-based and Academic-related Sedentary Behaviors in China: A Nationally Representative Study.” American Journal of Preventive Medicine. 52(5): 680-689.\nWang, Youfa, Jungwon Min, Jacob Khuri, and Miao Li. (2017). “A Systematic Examination of the Association Between Parental and Child Obesity Across Countries.” Advances in Nutrition. 8: 436-448.\nLi, Miao, Hong Xue, Min Wen, Weidong Wang, and Youfa Wang. (2016). “Nutrition and Physical Activity Related School Environment/Policy Factors and Child Obesity in China: A Nationally Representative Study of 8,573 Students in 110 Middle Schools.” Pediatric Obesity.\nOlson, Dan, and Miao Li. (2015). “Does a Nation’s Religious Composition Affect Generalized Trust? The Role of Religious Heterogeneity and the Percent Religious.” Journal for the Scientific Study of Religion. 54(4):756–773.\nLi, Miao. (2015). “Chronic Poverty Exposure of Grandparents and BMI Trajectories of Grandchildren: A Prospective Intergenerational Study.” American Journal of Epidemiology. 181(3):163-170.\nLi, Miao and Anderson, James G. (2015). “Pre-migration Trauma Exposure and Psychological Distress for Asian American Immigrants: Linking the Pre- and Post-Migration Contexts.” Journal of Immigrant and Minority Health. 18(4), 728-739.\nLi, Miao. (2015). “Pre-migration Trauma and Post-Migration Acculturative Stressors: Transnational Stress Proliferation.” Social Indicators Research. 18(4):728-739.\nLi, Miao. (2014). “Discrimination and Psychiatric Disorder among Asian American Immigrants: A National Analysis by Subgroups.” Journal of Immigrant and Minority Health, 16(6): 1157-1166.\nTay, Louis, Miao Li, David Myers, and Ed. Diener. (2013). “Religiosity and Subjective Well-Being: An International Perspective.” Pp. 163-76 in Religion and Spirituality Across Cultures, edited by Chu Kim-Prieto. New York: Springer.\n\nYang, Guangbin, and Miao Li. (2009). “Western Political Theories and the Development of Political Theories in China”, Journal of Chinese Political Science, 14: 275–297."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Miao Li, PhD",
-    "section": "",
-    "text": "Welcome to my website!\nI am an Assistant Professor of Sociology at Clemson University. I have a broad research interest in health, aging, education, immigration, social movement, and religion.\nShould you be interested in collaborating on research projects or have inquiries, please don’t hesitate to reach out via email."
-  },
-  {
-    "objectID": "blog/posts/post-with-code/index.html",
-    "href": "blog/posts/post-with-code/index.html",
-    "title": "Post With Code",
-    "section": "",
-    "text": "This is a post with executable code.\n\n1 + 1\n\n[1] 2"
-  },
-  {
-    "objectID": "blog/about.html",
-    "href": "blog/about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this blog"
-  },
-  {
-    "objectID": "blog/index.html",
-    "href": "blog/index.html",
-    "title": "blog",
-    "section": "",
-    "text": "Post With Code\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nFeb 22, 2024\n\n\nHarlow Malloc\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nFeb 19, 2024\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
+    "text": "Materialism and Mental Health\n\n\nTotal Environment and ADRD\n\n\nRandom Forest to Identify High-dimensional Interactions\n\n\nBest Subset Selection in Risk Assessment\n\n\nMIDFIELD"
   },
   {
     "objectID": "blog/posts/welcome/index.html",
@@ -49,10 +56,45 @@
     "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
   },
   {
-    "objectID": "projects.html",
-    "href": "projects.html",
+    "objectID": "blog/index.html",
+    "href": "blog/index.html",
+    "title": "blog",
+    "section": "",
+    "text": "Post With Code\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nFeb 22, 2024\n\n\nHarlow Malloc\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nFeb 19, 2024\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "blog/about.html",
+    "href": "blog/about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this blog"
+  },
+  {
+    "objectID": "blog/posts/post-with-code/index.html",
+    "href": "blog/posts/post-with-code/index.html",
+    "title": "Post With Code",
+    "section": "",
+    "text": "This is a post with executable code.\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
     "title": "Miao Li, PhD",
     "section": "",
-    "text": "Materialism and Mental Health\n\n\nTotal Environment and ADRD\n\n\nRandom Forest to Identify High-dimensional Interactions\n\n\nBest Subset Selection in Risk Assessment\n\n\nMIDFIELD"
+    "text": "Welcome to my website!\nI am an Assistant Professor of Sociology at Clemson University. I have a broad research interest in health, aging, education, immigration, social movement, and religion.\nShould you be interested in collaborating on research projects or have inquiries, please don’t hesitate to reach out via email."
+  },
+  {
+    "objectID": "publication.html",
+    "href": "publication.html",
+    "title": "Miao Li, PhD",
+    "section": "",
+    "text": "Li, Miao, Weidong Wang, Bei Liu, and Sarah Mustillo. (2024).”Combined nutrition and psychosocial stimulation intervention for child development in rural China: the role of parental resources” Chinese Sociological Review, 1-28. https://doi.org/10.1080/21620555.2024.2305787\nLi, Miao and Ye Luo. (2023). Physical Disability, Psychological Resilience and COVID-related Changes in Depressive Symptoms among U.S. Older Adults. The Journals of Gerontology: Series B, gbad025. https://doi.org/10.1093/geronb/gbad025\nLi, Miao and Ye Luo. (2023). Race-Ethnicity and Depressive Symptoms Among U.S. Older Adults in the COVID-19 Pandemic: Uncovering the Counterbalancing Mechanisms. Innovation in Aging. https://doi.org/10.1093/geroni/igad003\nWang, Weidong, and Miao Li. (2023). Daily work stress and parent-to-child aggression: moderation of grandparent coresidence. Chinese Sociological Review, 1-20. https://doi.org/10.1080/21620555.2023.2165060 (*Equal contribution)\nLi, Miao and Weidong Wang. (2021). Educational Disparities in COVID-19 Prevention in China: The Role of Contextual Danger, Perceived Risk, and Interventional Context. International journal of environmental research and public health, 18(7), 3383.\nMustillo, Sarah. A., Li, Miao., Morton, Patricia., & Ferraro, Ken. F. (2021). Early Origins of Body Mass in Later Life: Examining Childhood Risks and Adult Pathways. Journal of Health and Social Behavior, 62(2), 152–169\nMustillo, Sarah, Miao Li, and Weidong Wang. (2021). “Parent Work-to-Family Conflict and Child Psychological Well-being: Moderating Role of Grandparent Coresidence”. Journal of Marriage and Family. 83: 27–39\nLi, Miao. (2020). “College Expectation in Adolescence and Nutritional Health in Early Adulthood: The hidden cost of social position.” Social Science & Medicine. 265 (online first): 113482\nLi, Miao, and Sarah Mustillo. (2020). “Linking Maternal and Offspring Depression: A self-worth process explanation”. Journal of Affective Disorders. 273(1): 113-121.\nMustillo, Sarah, Miao Li, and Ken Ferraro. (2019). “Evaluating the Cumulative Impact of Childhood Misfortune: A Structural Equation Modeling Approach.” Sociological Methods & Research. 50(3), 1073–1109.\nLi, Miao, Rong Fu, Hong Xue, and Youfa Wang. (2019). “Maternal Obesity and Children’s Peer Victimization: The Intergenerational Impact of Weight-based Stigma.” Journal of Health and Social Behavior. 60(1): 69-83.\nLi, Miao, Sarah Mustillo, and James Anderson. (2018). “Childhood poverty dynamics and adulthood overweight/obesity: Unpacking the black box of childhood.” Social Science Research. 76: 92-104.\nLi, Miao, Sarah Mustillo, and Weidong Wang. (2018). “Perceived Discrimination, Screen Use, and BMI among Rural-to-Urban Migrant Children in China: Evidence from A Nutrition Transition Context.” Journal of Immigrant and Minority Health.\nLi, Miao, Fenggang Yang, Yun Lu. (2018). “Religious Plausibility of Chinese College Students: State, Science, and Social Network.” Religions. 9(10):309\nLi, Miao, Youfa Wang, Hong Xue, Jungwon Min. (2017). “Increased Obesity Risks for Being an Only Child in China: Findings from a nationally representative study of 19,487 children.” Public Health. 153: 44–51.\nLi, Miao, Hong Xue, Peng Jia, Yaling Zhao, Zhiyong Wang, Fei Xu and Youfa Wang. (2017). “Pocket Money, Eating Behaviors, and Weight Status among Chinese Children: The Childhood Obesity Study in China Mega-cities.” Preventive Medicine. 100: 208-215.\nJia, Peng, Miao Li, Hong Xue, and Youfa Wang. (2017). “School Environment and Policies and Associations With Child Eating Behaviors and Weight Status in Urban China: The Childhood Obesity Study in China Mega-cities”. International Journal of Obesity. 41: 813–819. (*Equal contribution)\nMin, Jungwon, Hong Xue, Vivian Wang, Miao Li, and Youfa Wang. (2017). “Are single children more likely to be overweight or obese than those with siblings? The influence of China’s one-child policy on childhood obesity.” Preventive Medicine. 103: 8-13.\nLi, Miao, Hong Xue, Weidong Wang, and Youfa Wang. (2017). “Parental Expectations and Children’s Screen-based and Academic-related Sedentary Behaviors in China: A Nationally Representative Study.” American Journal of Preventive Medicine. 52(5): 680-689.\nWang, Youfa, Jungwon Min, Jacob Khuri, and Miao Li. (2017). “A Systematic Examination of the Association Between Parental and Child Obesity Across Countries.” Advances in Nutrition. 8: 436-448.\nLi, Miao, Hong Xue, Min Wen, Weidong Wang, and Youfa Wang. (2016). “Nutrition and Physical Activity Related School Environment/Policy Factors and Child Obesity in China: A Nationally Representative Study of 8,573 Students in 110 Middle Schools.” Pediatric Obesity.\nOlson, Dan, and Miao Li. (2015). “Does a Nation’s Religious Composition Affect Generalized Trust? The Role of Religious Heterogeneity and the Percent Religious.” Journal for the Scientific Study of Religion. 54(4):756–773.\nLi, Miao. (2015). “Chronic Poverty Exposure of Grandparents and BMI Trajectories of Grandchildren: A Prospective Intergenerational Study.” American Journal of Epidemiology. 181(3):163-170.\nLi, Miao and Anderson, James G. (2015). “Pre-migration Trauma Exposure and Psychological Distress for Asian American Immigrants: Linking the Pre- and Post-Migration Contexts.” Journal of Immigrant and Minority Health. 18(4), 728-739.\nLi, Miao. (2015). “Pre-migration Trauma and Post-Migration Acculturative Stressors: Transnational Stress Proliferation.” Social Indicators Research. 18(4):728-739.\nLi, Miao. (2014). “Discrimination and Psychiatric Disorder among Asian American Immigrants: A National Analysis by Subgroups.” Journal of Immigrant and Minority Health, 16(6): 1157-1166.\nTay, Louis, Miao Li, David Myers, and Ed. Diener. (2013). “Religiosity and Subjective Well-Being: An International Perspective.” Pp. 163-76 in Religion and Spirituality Across Cultures, edited by Chu Kim-Prieto. New York: Springer.\n\nYang, Guangbin, and Miao Li. (2009). “Western Political Theories and the Development of Political Theories in China”, Journal of Chinese Political Science, 14: 275–297."
+  },
+  {
+    "objectID": "teaching.html",
+    "href": "teaching.html",
+    "title": "Miao Li, PhD",
+    "section": "",
+    "text": "SOC2010 Introduction to Sociology\n\n\nSOC3020 Research Methods I\n\n\nSOC4800/6800 Medical Sociology\n\n\nSSCI8010 Quantitative Research Methods I\n\n\nR Lab"
   }
 ]
