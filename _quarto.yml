@@ -14,8 +14,8 @@ website:
         text: Teaching
       - href: projects.qmd
         text: Work in Progress
-#      - href: resume.qmd
-#        text: Résumé / Education
+      - href: blog/index.qmd
+        text: blog
     tools:
       - icon: twitter
         href: https://twitter.com/
