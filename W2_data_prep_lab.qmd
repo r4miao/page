@@ -1,0 +1,106 @@
+---
+title: "Data Preparation Lab"
+format: 
+  html:
+    self-contained: true
+    toc: true
+    toc-location: left
+    #theme: yeti
+    #number-sections: true
+    page-layout: full
+ 
+editor: visual
+execute: 
+  echo: true
+  message: false
+  warning: false
+---
+
+For an introduction to R packages, see [here](https://www.datacamp.com/tutorial/r-packages-guide).
+
+## 1. Load necessary packages
+
+```{r}
+library(readxl)
+library(tidyverse)
+library(labelled)
+```
+
+## 2. Read in Data
+
+-   You need to specify your own directory path.
+-   The function `read_excel` is part of the package `readxl`, which was loaded into the current working environment in the previous step
+-   R is capable of reading data from most formats, including [data files created in other statistical packages](https://haven.tidyverse.org/). Whether the data was prepared using Excel (in CSV, XLSX, or TXT format), SAS, Stata, SPSS, or others, R can read and load the data.
+
+```{r}
+mysurvey <- read_excel("data/Survey_results.xlsx") 
+
+```
+
+check the names of the data columns (i.e., variable names)
+
+```{r}
+names(mysurvey)
+```
+
+## 3. Rename the variables
+
+-   a). rename the variables with shorter names
+-   b). create an ID variable
+
+```{r}
+names(mysurvey) <- c("belief", "gender", "age", "reliattend", "belief12","alcohol","presex","homosex","polaffi")
+mysurvey <- rowid_to_column(mysurvey, "ID")
+```
+
+-   c). check your work
+
+```{r}
+names(mysurvey)
+head(mysurvey)
+```
+
+## 4. Create labels for the shorter variable names
+
+-   The new variable names were too short. We need more information. A label for each variable name containing such information will be great!
+
+-   The function `var_label` is part of the package `labelled`, which was loaded into the current working environment in the openning step
+
+```{r}
+var_label(mysurvey) <- list(
+  ID         = "Individual ID",
+  belief     = "Are you a Christian?",
+  gender     = "What is your sex?",
+  age        = "How old are you?",
+  reliattend = "How often do you go to a church?",
+  belief12   = "Were you a Christian when you were 12 years old?",
+  alcohol    = "Largest number of drinks in one occasion in the past 30 days",
+  presex     = "How much agree with ‘premarital sex is always wrong'?",
+  homosex    = "How much agree with same-sex marriage?",
+  polaffi    = "Political affiliation: Rep, Demo, or Ind?"
+)
+```
+
+## 5. Convert all character variables to factor variables {.smaller}
+
+-   Below I am using the pipe operator from the `tidyverse` package.
+-   **`factor`** is a special data type in R. Click the [link](https://stats.oarc.ucla.edu/r/modules/factor-variables/) to see more details.
+-   for factors whose values have an inherent order (e.g., `reliattend`), I re-order them using `levels` argument
+-   the factor variable `belief` has a category `Not Sure`, which I recoded into missing values
+-   I created a numeric version for the factor variable `reliattend`
+
+```{r}
+mysurvey <-  mysurvey %>%
+  mutate_if(is.character, as.factor) %>% 
+  mutate(reliattend = factor(reliattend, levels = c("Rarely or never", "Less than monthly", "Monthly but not weekly", "Weekly or more"))) %>% 
+  mutate(belief = fct_recode(belief, NULL = "Not Sure")) %>% 
+  mutate(attend = as.numeric(reliattend))  # construct a numeric version
+
+```
+
+Check the levels of the factor variable
+
+```{r}
+levels(mysurvey$reliattend)
+str(mysurvey)
+```
