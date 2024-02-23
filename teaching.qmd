@@ -9,3 +9,5 @@ title:  ""
 #### [SOC4800/6800 Medical Sociology]()
 
 #### [SSCI8010 Quantitative Research Methods I]()
+
+#### [R Lab](docs/teaching/W2_data_prep_lab)
