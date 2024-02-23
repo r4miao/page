@@ -10,4 +10,4 @@ title:  ""
 
 #### [SSCI8010 Quantitative Research Methods I]()
 
-#### [R Lab](docs/W2_data_prep_lab.html)
+#### [R Lab](W2_data_prep_lab.html)
