@@ -8,22 +8,27 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - research.qmd
-      - teaching.qmd
-      - projects.qmd
+      - href: research.qmd
+        text: Publications
+      - href: teaching.qmd
+        text: Teaching
+      - href: projects.qmd
+        text: Work in Progress
+#      - href: resume.qmd
+#        text: Résumé / Education
     tools:
       - icon: twitter
         href: https://twitter.com/
       - icon: github
-        href: https://github.com/r4miao/MIDFIELD
+        href: https://r4miao.github.io/MIDFIELD/
   page-footer:
-    right: "Built with [Quarto](https://quarto.org/) in Rstudio"
-    left: "&copy; Copyright 2024, Miao Li"
+    right: "Built with [Quarto](https://quarto.org/) in [Rstudio](https://posit.co/download/rstudio-desktop/)"
+    center: "&copy; Copyright 2024, Miao Li"
 
 format:
   html:
     theme: minty
-    toc: true
+    toc: false
 
 editor: source
 

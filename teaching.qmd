@@ -1,9 +1,11 @@
 ---
-title: "Teaching"
+title:  ""
 ---
 
-## Course 1
+#### [SOC2010 Introduction to Sociology]()
 
-## Course 1
+#### [SOC3020 Research Methods I]()
 
-## Course 1
+#### [SOC4800/6800 Medical Sociology]()
+
+#### [SSCI8010 Quantitative Research Methods I]()

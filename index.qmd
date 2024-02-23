@@ -1,19 +1,15 @@
 ---
-title: "About Me"
+title: ""
+image: img/miao_li_4.png  
 about:
   id: me
-  template: broadside
-  image: docs/img/ML_forpinting.png{width=50% height=50%}
+  template: trestles
+  image-width: 14em
+#  image-shape: round
 ---
 
-:::{#me}
+Welcome to my website!
 
-### Goals
+I am an Assistant Professor of Sociology at Clemson University. I have a broad research interest in health, aging, education, immigration, social movement, and religion.
 
-### Education
-
-### Experience
-
-:::
-
-Thanks for checking out my web site!
+Should you be interested in collaborating on research projects or have inquiries, please don't hesitate to reach out via [email](mailto:%20miaol@clemson.edu).
